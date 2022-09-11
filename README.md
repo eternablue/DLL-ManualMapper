@@ -30,7 +30,7 @@ typedef BOOL(__stdcall* dll_main)(HMODULE, DWORD, void*);
 if (optional_header->AddressOfEntryPoint)
   {
     dll_main entry_point = (dll_main)(base_address + optional_header->AddressOfEntryPoint);
-		entry_point((HMODULE)(manual_mapping_data->image_base), DLL_PROCESS_ATTACH, 0);
+    entry_point((HMODULE)(manual_mapping_data->image_base), DLL_PROCESS_ATTACH, 0);
   }
   ```
   
