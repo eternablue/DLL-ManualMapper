@@ -16,8 +16,22 @@ for (int i = 0; i < nt_header->FileHeader.NumberOfSections; i++)
   (void*)((char*)file_buffer + section_header[i].PointerToRawData), section_header[i].SizeOfRawData, 0);
 ```
 
-Great, the remote process now has all of the data it needs to be executed, however the data isn't organized properly to be ran in another process's enviroment. Simply starting a thread at that location won't work. We now need to create a loader that will run in the remote process and fix the ```Import Address Table```(aka IAT) and execute the entrypoint of our module, if it has any. It does so by looping through the imports our DLL, and using ```GetProcAddress``` to find the addresses of each import in the remote process : 
+Great, the remote process now has all of the data it needs to be executed, however the data isn't organized properly to be ran in another process's enviroment. Simply starting a thread at that location won't work. We now need to create a loader that will run in the remote process and fix the ```Import Address Table```(aka IAT). It does so by looping through the imports our DLL, and using ```GetProcAddress``` to find the addresses of each import in the remote process : 
 
 ```cpp
 *function_reference = (uint64_t)(manual_mapping_data->GetProcAddress_address(hDll, MAKEINTRESOURCEA(*thunk_reference)));
 ```
+
+If our DLL has an entrypoint, we execute it by casting it to a function template that matches the [DllMain](https://docs.microsoft.com/en-us/windows/win32/dlls/dllmain) convention:
+
+```cpp
+typedef BOOL(__stdcall* dll_main)(HMODULE, DWORD, void*);
+
+if (optional_header->AddressOfEntryPoint)
+  {
+    dll_main entry_point = (dll_main)(base_address + optional_header->AddressOfEntryPoint);
+		entry_point((HMODULE)(manual_mapping_data->image_base), DLL_PROCESS_ATTACH, 0);
+  }
+  ```
+  
+  We can now write our loader in the remote process and use `CreateRemoteThread` to run it and start a new thread of execution in the remote process.
