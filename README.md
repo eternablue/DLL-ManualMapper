@@ -19,7 +19,7 @@ for (int i = 0; i < nt_header->FileHeader.NumberOfSections; i++)
 Great, the remote process now has all of the data it needs to be executed, however the data isn't organized properly to be ran in another process's enviroment. Simply starting a thread at that location won't work. We now need to create a loader that will run in the remote process and fix the ```Import Address Table```(aka IAT). It does so by looping through the imports our DLL, and using ```GetProcAddress``` to find the addresses of each import in the remote process : 
 
 ```cpp
-*function_reference = (uint64_t)(manual_mapping_data->GetProcAddress_address(hDll, MAKEINTRESOURCEA(*thunk_reference)));
+*function_reference = (uint64_t)(manual_mapping_data->GetProcAddress(hDll, MAKEINTRESOURCEA(*thunk_reference)));
 ```
 
 If our DLL has an entrypoint, we execute it by casting it to a function template that matches the [DllMain](https://docs.microsoft.com/en-us/windows/win32/dlls/dllmain) convention:
