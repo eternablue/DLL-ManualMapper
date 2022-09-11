@@ -35,3 +35,7 @@ if (optional_header->AddressOfEntryPoint)
   ```
   
   We can now write our loader in the remote process and use `CreateRemoteThread` to run it and start a new thread of execution in the remote process.
+
+## Showcase
+
+![image](https://cdn.discordapp.com/attachments/780153367305256981/1018640843101442179/demo_map.gif)
