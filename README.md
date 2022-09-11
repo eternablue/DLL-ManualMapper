@@ -1,1 +1,1 @@
-# DLL-ManualMapper
+# Manual mapping - DLL Injection
