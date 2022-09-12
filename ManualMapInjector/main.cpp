@@ -65,6 +65,12 @@ void __stdcall stub()
 
 void main(int argc, char* argv[])
 {
+	if (argc != 3)
+	{
+		printf("\tUsage : DLL-ManualMapper.exe [EXE_NAME] [DLL_PATH]\n");
+		return;
+	}	
+	
 	HANDLE hFile = CreateFileA(&(*argv[2]), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
 	if (hFile)
 		printf("[+] Opened handle 0x%X to file\n", hFile);
